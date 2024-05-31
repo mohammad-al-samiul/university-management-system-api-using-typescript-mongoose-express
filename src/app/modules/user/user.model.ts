@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import { TUser } from "./student.interface";
+import { TUser } from "./user.interface";
 
 //create schema for user
 const userSchema = new Schema<TUser>(
