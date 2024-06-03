@@ -21,7 +21,7 @@ export const Months: TMonths[] = [
 
 export const AcademicSemesterName: TAcademicSemesterName[] = [
   "Autumn",
-  "Spring",
+  "Summar",
   "Fall",
 ];
 
