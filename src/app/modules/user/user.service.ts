@@ -15,7 +15,6 @@ const createStudentIntoDB = async (payload: TStudent, password: string) => {
   userData.password = password || (config.default_password as string);
   //set student role
   userData.role = "student";
-  //set user id
 
   //get semester
   const semesterData = await AcademicSemester.findById(
@@ -23,6 +22,7 @@ const createStudentIntoDB = async (payload: TStudent, password: string) => {
   );
 
   if (semesterData) {
+    //set user id
     userData.id = await generateStudentId(semesterData);
   }
 
