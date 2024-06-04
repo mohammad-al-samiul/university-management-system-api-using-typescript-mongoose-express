@@ -24,7 +24,7 @@ router.get(
 );
 
 router.patch(
-  "/update-academic-faculty",
+  "/update-academic-faculty/:id",
   validateRequest(
     AcademicFacultyValidations.updateAcademicFacultyValidationSchema
   ),
