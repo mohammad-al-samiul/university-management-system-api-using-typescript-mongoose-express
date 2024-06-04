@@ -1,3 +1,4 @@
+import { populate } from "dotenv";
 import { TAcademicDepartment } from "./academicDepartment.interface";
 import { AcademicDepartment } from "./academicDepartment.model";
 
@@ -7,12 +8,14 @@ const createAcademicDepartmentIntoDB = async (payload: TAcademicDepartment) => {
 };
 
 const getAllAcademicDepartmentIntoDB = async () => {
-  const result = await AcademicDepartment.find();
+  const result = await AcademicDepartment.find().populate("academicFaculty");
   return result;
 };
 
 const getSingleAcademicDepartmentIntoDB = async (id: string) => {
-  const result = await AcademicDepartment.findOne({ _id: id });
+  const result = await AcademicDepartment.findOne({ _id: id }).populate(
+    "academicFaculty"
+  );
   return result;
 };
 const updateAcademicDepartmentIntoDB = async (
@@ -23,7 +26,8 @@ const updateAcademicDepartmentIntoDB = async (
     { _id: id },
     payload,
     { new: true }
-  );
+  ).populate("academicFaculty");
+
   return result;
 };
 
