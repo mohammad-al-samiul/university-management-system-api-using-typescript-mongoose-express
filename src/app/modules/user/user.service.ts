@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import config from "../../config";
 import { TAcademicSemester } from "../academicSemester/academicSemester.interface";
 import { AcademicSemester } from "../academicSemester/academicSemester.model";
@@ -7,6 +8,8 @@ import { TUser } from "./user.interface";
 
 import { User } from "./user.model";
 import { generateStudentId } from "./user.utils";
+import { AppError } from "../academicDepartment/academicDepartment.model";
+import httpStatus from "http-status";
 
 const createStudentIntoDB = async (payload: TStudent, password: string) => {
   //create a user object
@@ -15,27 +18,40 @@ const createStudentIntoDB = async (payload: TStudent, password: string) => {
   userData.password = password || (config.default_password as string);
   //set student role
   userData.role = "student";
-
   //get semester
   const semesterData = await AcademicSemester.findById(
     payload.admissionSemester
   );
+  const session = await mongoose.startSession();
 
-  if (semesterData) {
+  try {
+    session.startTransaction();
     //set user id
-    userData.id = await generateStudentId(semesterData);
-  }
+    if (semesterData) {
+      userData.id = await generateStudentId(semesterData);
+    }
 
-  //create a user
-  const newUser = await User.create(userData);
-  if (Object.keys(newUser).length) {
-    payload.id = newUser.id;
-    payload.user = newUser._id;
-  }
+    //create a user
+    const newUser = await User.create([userData], { session });
+    if (!newUser.length) {
+      throw new AppError(httpStatus.BAD_REQUEST, "Failed to created user!");
+    }
+    payload.id = newUser[0].id;
+    payload.user = newUser[0]._id;
 
-  //create a student
-  const newStudent = await Student.create(payload);
-  return newStudent;
+    //create a student
+    const newStudent = await Student.create([payload], { session });
+    if (!newStudent.length) {
+      throw new AppError(httpStatus.BAD_REQUEST, "Failed to create student!");
+    }
+    await session.commitTransaction();
+    await session.endSession();
+
+    return newStudent;
+  } catch (error) {
+    await session.abortTransaction();
+    await session.endSession();
+  }
 };
 
 export const UserServices = {
