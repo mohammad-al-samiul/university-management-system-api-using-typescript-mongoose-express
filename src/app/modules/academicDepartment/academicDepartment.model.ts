@@ -2,6 +2,7 @@ import mongoose, { Schema } from "mongoose";
 import { TAcademicDepartment } from "./academicDepartment.interface";
 import { nextTick } from "process";
 import { number } from "zod";
+import AppError from "../../errors/AppError";
 
 const academicDepartmentSchema = new Schema<TAcademicDepartment>(
   {
@@ -19,33 +20,6 @@ const academicDepartmentSchema = new Schema<TAcademicDepartment>(
     timestamps: true,
   }
 );
-
-// class AppError extends Error {
-//   public statusCode: number;
-
-//   constructor(statusCode: number, message: string, stack = "") {
-//     super(message);
-//     this.statusCode = statusCode;
-//     if (stack) {
-//       this.stack = stack;
-//     } else {
-//       Error.captureStackTrace(this, this.constructor);
-//     }
-//   }
-// }
-
-export class AppError extends Error {
-  public statusCode: number;
-  constructor(statusCode: number, message: string, stack = "") {
-    super(message);
-    this.statusCode = statusCode;
-    if (stack) {
-      this.stack = stack;
-    } else {
-      Error.captureStackTrace(this, this.constructor);
-    }
-  }
-}
 
 academicDepartmentSchema.pre("save", async function (next) {
   const isDepartmentExist = await AcademicDepartment.findOne({

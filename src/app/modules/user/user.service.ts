@@ -19,9 +19,9 @@ const createStudentIntoDB = async (payload: TStudent, password: string) => {
   //set student role
   userData.role = "student";
   //get semester
-  const semesterData = await AcademicSemester.findById(
-    payload.admissionSemester
-  );
+  const semesterData = await AcademicSemester.findOne({
+    _id: payload.admissionSemester,
+  });
   const session = await mongoose.startSession();
 
   try {
