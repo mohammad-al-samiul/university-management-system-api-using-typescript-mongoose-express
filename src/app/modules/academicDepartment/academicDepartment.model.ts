@@ -3,12 +3,14 @@ import { TAcademicDepartment } from "./academicDepartment.interface";
 import { nextTick } from "process";
 import { number } from "zod";
 import AppError from "../../errors/AppError";
+import httpStatus from "http-status";
 
 const academicDepartmentSchema = new Schema<TAcademicDepartment>(
   {
     name: {
       type: String,
-      required: [true, "name is required"],
+      required: true,
+      unique: true,
     },
     academicFaculty: {
       type: Schema.Types.ObjectId,
@@ -25,8 +27,9 @@ academicDepartmentSchema.pre("save", async function (next) {
   const isDepartmentExist = await AcademicDepartment.findOne({
     name: this.name,
   });
+
   if (isDepartmentExist) {
-    throw new Error("Department Already Exist!");
+    throw new AppError(httpStatus.NOT_FOUND, "Department Already Exist!");
   }
   next();
 });
@@ -35,7 +38,7 @@ academicDepartmentSchema.pre("findOneAndUpdate", async function (next) {
   const query = this.getQuery();
   const isDepartmentExist = await AcademicDepartment.findOne(query);
   if (!isDepartmentExist) {
-    throw new AppError(404, "Department doesn't exist!");
+    throw new AppError(httpStatus.NOT_FOUND, "Department doesn't exist!");
   }
   next();
 });
