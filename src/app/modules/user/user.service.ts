@@ -8,8 +8,9 @@ import { TUser } from "./user.interface";
 
 import { User } from "./user.model";
 import { generateStudentId } from "./user.utils";
-import { AppError } from "../academicDepartment/academicDepartment.model";
+
 import httpStatus from "http-status";
+import AppError from "../../errors/AppError";
 
 const createStudentIntoDB = async (payload: TStudent, password: string) => {
   //create a user object
@@ -48,9 +49,10 @@ const createStudentIntoDB = async (payload: TStudent, password: string) => {
     await session.endSession();
 
     return newStudent;
-  } catch (error) {
+  } catch (error: any) {
     await session.abortTransaction();
     await session.endSession();
+    throw new Error(error);
   }
 };
 
