@@ -51,14 +51,7 @@ export const createStudentValidationSchema = z.object({
 });
 
 const updateUserNameValidationSchema = z.object({
-  firstName: z
-    .string()
-    .min(1, { message: "First Name cannot be empty" })
-    .max(20, { message: "First Name cannot exceed 20 characters" })
-    .refine((value) => /^[A-Z]/.test(value), {
-      message: "First Name must start with a capital letter",
-    })
-    .optional(),
+  firstName: z.string().min(1).max(20).optional(),
   middleName: z.string().optional(),
   lastName: z.string().optional(),
 });
@@ -83,7 +76,7 @@ export const updateStudentValidationSchema = z.object({
   body: z.object({
     password: z.string().max(20).optional(),
     student: z.object({
-      name: updateUserNameValidationSchema.optional(),
+      name: updateUserNameValidationSchema,
       gender: z.enum(["male", "female", "other"]).optional(),
       dateOfBirth: z.string().optional(),
       email: z.string().email().optional(),
