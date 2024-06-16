@@ -1,8 +1,8 @@
-import { Types } from "mongoose";
+import { Model, Types } from "mongoose";
 
-export type TUserName = {
+export type TFacultyUserName = {
   firstName: string;
-  middleName: string;
+  middleName?: string;
   lastName: string;
 };
 
@@ -22,7 +22,7 @@ export type TFaculty = {
   id: string;
   user: Types.ObjectId;
   designation: string;
-  name: TUserName;
+  name: TFacultyUserName;
   gender: TGender;
   dateOfBirth?: Date;
   email: string;
@@ -35,3 +35,7 @@ export type TFaculty = {
   academicDepartment: Types.ObjectId;
   isDeleted: boolean;
 };
+
+export interface FacultyModel extends Model<TFaculty> {
+  isUserExists(id: string): Promise<TFaculty | null>;
+}
